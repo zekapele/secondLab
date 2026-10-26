@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://www.example.com/candy"
+           xmlns:tns="http://www.example.com/candy"
+           elementFormDefault="qualified">
+
+    <xs:element name="Candy">
+        <xs:annotation>
+            <xs:documentation>Корінь каталогу. Містить список цукерок.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="candy" type="tns:CandyItem" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="CandyItem">
+        <xs:sequence>
+            <xs:element name="name" type="tns:Label"/>
+            <xs:element name="energy" type="tns:Energy"/>
+            <xs:element name="type" type="tns:CandyType"/>
+            <xs:element name="ingredients" type="tns:Ingredients"/>
+            <xs:element name="value" type="tns:NutritionalValue"/>
+            <xs:element name="production" type="tns:Label"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:ID" use="required"/>
+    </xs:complexType>
+
+    <xs:simpleType name="Label">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="100"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="Energy">
+        <xs:annotation>
+            <xs:documentation>Калорійність, ккал.</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:int">
+            <xs:minInclusive value="1"/>
+            <xs:maxInclusive value="1000"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="CandyType">
+        <xs:sequence>
+            <xs:element name="kind" type="tns:CandyKind"/>
+        </xs:sequence>
+        <xs:attribute name="filling" type="xs:boolean" use="required"/>
+    </xs:complexType>
+
+    <xs:simpleType name="CandyKind">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="caramel"/>
+            <xs:enumeration value="iris"/>
+            <xs:enumeration value="chocolate"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="Ingredients">
+        <xs:sequence>
+            <xs:element name="water" type="tns:Milligrams"/>
+            <xs:element name="sugar" type="tns:Milligrams"/>
+            <xs:element name="fructose" type="tns:Milligrams"/>
+            <xs:element name="chocolateType" type="tns:ChocolateType" minOccurs="0"/>
+            <xs:element name="vanillin" type="tns:Vanillin"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="Milligrams">
+        <xs:annotation>
+            <xs:documentation>Маса в міліграмах.</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:int">
+            <xs:minInclusive value="0"/>
+            <xs:maxInclusive value="100000"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="Vanillin">
+        <xs:annotation>
+            <xs:documentation>Ванілін у міліграмах.</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:int">
+            <xs:minInclusive value="0"/>
+            <xs:maxInclusive value="1000"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ChocolateType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="milk"/>
+            <xs:enumeration value="dark"/>
+            <xs:enumeration value="white"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="NutritionalValue">
+        <xs:annotation>
+            <xs:documentation>Харчова цінність, грами.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="proteins" type="tns:Grams"/>
+            <xs:element name="fats" type="tns:Grams"/>
+            <xs:element name="carbohydrates" type="tns:Grams"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="Grams">
+        <xs:restriction base="xs:decimal">
+            <xs:minInclusive value="0"/>
+            <xs:maxInclusive value="100"/>
+            <xs:fractionDigits value="2"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

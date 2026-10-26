@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Candy xmlns="http://www.example.com/candy"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.example.com/candy ../xsd/candies.xsd">
+    <candy id="vk">
+        <name>Вечірній Київ</name>
+        <energy>452</energy>
+        <type filling="true">
+            <kind>chocolate</kind>
+        </type>
+        <ingredients>
+            <water>15000</water>
+            <sugar>42000</sugar>
+            <fructose>8000</fructose>
+            <chocolateType>milk</chocolateType>
+            <vanillin>20</vanillin>
+        </ingredients>
+        <value>
+            <proteins>5.40</proteins>
+            <fats>26.20</fats>
+            <carbohydrates>57.80</carbohydrates>
+        </value>
+        <production>Roshen</production>
+    </candy>
+    <candy id="romashka">
+        <name>Ромашка</name>
+        <energy>378</energy>
+        <type filling="false">
+            <kind>caramel</kind>
+        </type>
+        <ingredients>
+            <water>8000</water>
+            <sugar>61000</sugar>
+            <fructose>12000</fructose>
+            <vanillin>5</vanillin>
+        </ingredients>
+        <value>
+            <proteins>0.80</proteins>
+            <fats>0.40</fats>
+            <carbohydrates>92.50</carbohydrates>
+        </value>
+        <production>AVK</production>
+    </candy>
+    <candy id="bilochka">
+        <name>Білочка</name>
+        <energy>415</energy>
+        <type filling="false">
+            <kind>iris</kind>
+        </type>
+        <ingredients>
+            <water>12000</water>
+            <sugar>48000</sugar>
+            <fructose>6000</fructose>
+            <vanillin>8</vanillin>
+        </ingredients>
+        <value>
+            <proteins>3.10</proteins>
+            <fats>12.40</fats>
+            <carbohydrates>71.20</carbohydrates>
+        </value>
+        <production>Roshen</production>
+    </candy>
+    <candy id="strila">
+        <name>Стріла</name>
+        <energy>498</energy>
+        <type filling="false">
+            <kind>chocolate</kind>
+        </type>
+        <ingredients>
+            <water>10000</water>
+            <sugar>38000</sugar>
+            <fructose>3000</fructose>
+            <chocolateType>dark</chocolateType>
+            <vanillin>10</vanillin>
+        </ingredients>
+        <value>
+            <proteins>6.80</proteins>
+            <fats>32.50</fats>
+            <carbohydrates>52.10</carbohydrates>
+        </value>
+        <production>Konti</production>
+    </candy>
+    <candy id="duchess">
+        <name>Дюшес</name>
+        <energy>365</energy>
+        <type filling="false">
+            <kind>caramel</kind>
+        </type>
+        <ingredients>
+            <water>9000</water>
+            <sugar>58000</sugar>
+            <fructose>15000</fructose>
+            <vanillin>4</vanillin>
+        </ingredients>
+        <value>
+            <proteins>0.50</proteins>
+            <fats>0.20</fats>
+            <carbohydrates>94.10</carbohydrates>
+        </value>
+        <production>AVK</production>
+    </candy>
+    <candy id="korivka">
+        <name>Корівка</name>
+        <energy>440</energy>
+        <type filling="false">
+            <kind>iris</kind>
+        </type>
+        <ingredients>
+            <water>14000</water>
+            <sugar>45000</sugar>
+            <fructose>7000</fructose>
+            <vanillin>15</vanillin>
+        </ingredients>
+        <value>
+            <proteins>4.20</proteins>
+            <fats>16.80</fats>
+            <carbohydrates>68.40</carbohydrates>
+        </value>
+        <production>Житомирські ласощі</production>
+    </candy>
+    <candy id="ptashyne">
+        <name>Пташине молоко</name>
+        <energy>470</energy>
+        <type filling="true">
+            <kind>chocolate</kind>
+        </type>
+        <ingredients>
+            <water>18000</water>
+            <sugar>40000</sugar>
+            <fructose>9000</fructose>
+            <chocolateType>white</chocolateType>
+            <vanillin>18</vanillin>
+        </ingredients>
+        <value>
+            <proteins>4.90</proteins>
+            <fats>22.30</fats>
+            <carbohydrates>61.70</carbohydrates>
+        </value>
+        <production>AVK</production>
+    </candy>
+</Candy>
