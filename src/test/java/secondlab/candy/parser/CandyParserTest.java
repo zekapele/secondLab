@@ -30,6 +30,14 @@ class CandyParserTest {
         Logger.getLogger("secondlab.candy").setLevel(Level.FINE);
     }
 
+    @Test
+    void factoryCreatesTheNamedParser() {
+        assertEquals(ParserKind.SAX, ParserKind.fromName("sax"));
+        assertEquals(ParserKind.DOM, ParserKind.fromName("DOM"));
+        assertEquals(ParserKind.STAX, ParserKind.fromName("stax"));
+        assertThrows(IllegalArgumentException.class, () -> ParserKind.fromName("jaxb"));
+    }
+
     @ParameterizedTest
     @EnumSource(ParserKind.class)
     void parsesTheCatalog(ParserKind kind) {

@@ -1,5 +1,7 @@
 package secondlab.candy;
 
+import secondlab.candy.error.CandyXmlException;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -33,9 +35,16 @@ class MainTest {
     }
 
     @Test
+    void runsWithASingleChosenParser() throws Exception {
+        Path output = Path.of("output", "candies-by-type.xml");
+        Main.main(new String[]{"DOM"});
+        assertTrue(Files.readString(output).contains("<iris"));
+    }
+
+    @Test
     void rejectsWrongArgumentsAndMissingFiles() {
         assertThrows(IllegalArgumentException.class, () -> Main.main(new String[]{"only-one"}));
-        assertThrows(IllegalStateException.class, () -> Main.main(new String[]{
+        assertThrows(CandyXmlException.class, () -> Main.main(new String[]{
                 "missing.xml", "missing.xsd", "missing.xsl", "out.xml"
         }));
     }

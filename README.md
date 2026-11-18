@@ -8,119 +8,97 @@
 
 ## 1. Мета роботи
 
-Опанувати опис даних у XML, обмеження структури схемою XSD, розбір документа парсерами SAX, DOM і StAX, валідацію, сортування колекції об’єктів та перетворення XML за допомогою XSL.
+Описати каталог цукерок у XML, обмежити структуру схемою XSD, зчитати документ у колекцію Java-об’єктів, відсортувати її та XSL-перетворенням розбити список на групи за типом цукерки.
 
 ## 2. Постановка задачі
 
-1. Створити XML-файл каталогу цукерок і відповідну схему XSD.
-2. У схемі використати прості та комплексні типи, переліки, граничні значення, обов’язкові атрибути та тип `ID`.
-3. Створити Java-класи, що відповідають цьому опису.
-4. Зчитати XML у колекцію об’єктів трьома парсерами: SAX, DOM, StAX.
-5. Сортувати об’єкти через інтерфейс `Comparator`.
-6. Валідувати XML за XSD.
-7. XSL-перетворенням розбити плоский список на підсписки за характеристикою (тип цукерки).
-8. Уникати дублювання коду.
-9. Покрити код unit-тестами.
-10. Виводити хід роботи через налаштований Logger.
+1. XML-файл і відповідна схема XSD (прості та комплексні типи, переліки, граничні значення, обов’язкові атрибути, тип `ID`).
+2. Java-класи під цей опис.
+3. Розбір XML і ініціалізація колекції. Для читання вузлів використано SAX, DOM і StAX.
+4. Сортування через `Comparator`.
+5. Валідація XML за XSD.
+6. XSL: плоский список розкладається на підсписки за Type.
+7. Без дублювання коду.
+8. Unit-тести.
+9. Повідомлення через Logger.
 
-Предметна область (варіант «Цукерки»):
+Поля варіанта: Name, Energy (ккал), Type (карамель / ірис / шоколадна, з начинкою або ні), Ingredients (вода, цукор і фруктоза в мг, тип шоколаду, ванілін), Value (білки, жири, вуглеводи в г), Production.
 
-| Поле | Зміст |
+## 3. Що змінено в реалізації розбору
+
+Спочатку SAX, DOM і StAX були окремими парсерами, кожен зі своєю логікою збору об’єктів. Це дублювало обробник.
+
+Після доопрацювання залишено **один парсер** і **один handler**:
+
+| Клас | Роль |
 |---|---|
-| Name | назва цукерки |
-| Energy | калорійність, ккал |
-| Type | карамель, ірис, шоколадна (з начинкою або ні) |
-| Ingredients | вода, цукор (мг), фруктоза (мг), тип шоколаду, ванілін (мг) |
-| Value | білки, жири, вуглеводи (г) |
-| Production | підприємство-виробник |
+| `XmlCandyParser` | єдиний парсер; будує колекцію `List<Candy>` |
+| `CandyXmlHandler` | єдиний обробник; реагує на `startElement`, `characters`, `endElement` |
 
-## 3. Структура проєкту
+SAX, DOM і StAX більше не парсять «самі по собі». Вони лише постачають події в `CandyXmlHandler`. Яке джерело подій використати, задається в `XmlCandyParser` (за замовчуванням SAX).
+
+`Main` запускає розбір **один раз**, через цей парсер. Колекція ініціалізується одним handler, а не трьома різними обробниками.
+
+## 4. Структура проєкту
 
 ```
 secondLab/
 ├── pom.xml
 ├── src/main/java/secondlab/candy/
-│   ├── Main.java                 точка входу
-│   ├── model/                    Java-модель каталогу
-│   ├── parser/                   SAX, DOM, StAX
-│   ├── validation/               перевірка за XSD
-│   ├── transform/                XSL
-│   ├── sort/                     Comparator
-│   ├── service/                  сценарій завантаження
-│   └── logging/                  Logger
+│   ├── Main.java
+│   ├── model/
+│   ├── parser/          XmlCandyParser, CandyXmlHandler
+│   ├── validation/
+│   ├── transform/
+│   ├── sort/
+│   ├── service/
+│   └── logging/
 ├── src/main/resources/
-│   ├── xml/candies.xml           вхідний каталог
-│   ├── xsd/candies.xsd           схема
-│   ├── xsl/candies-by-type.xsl   групування за типом
+│   ├── xml/candies.xml
+│   ├── xsd/candies.xsd
+│   ├── xsl/candies-by-type.xsl
 │   └── logging.properties
-├── src/test/java/                JUnit 5
-└── output/candies-by-type.xml    результат XSL
+├── src/test/java/
+└── output/candies-by-type.xml
 ```
 
-## 4. XML і XSD
+## 5. XML і XSD
 
-Вхідний документ: `src/main/resources/xml/candies.xml`.  
-Схема: `src/main/resources/xsd/candies.xsd`.
+Вхід: `src/main/resources/xml/candies.xml`  
+Схема: `src/main/resources/xsd/candies.xsd`
 
 У схемі:
 
-- **прості типи:** `Label`, `Energy` (1–1000 ккал), `Milligrams`, `Vanillin`, `Grams` (0–100, 2 знаки);
-- **переліки:** `caramel | iris | chocolate`, `milk | dark | white`;
-- **комплексні типи:** `CandyItem`, `CandyType`, `Ingredients`, `NutritionalValue`;
-- **обов’язкові атрибути:** `id` типу `xs:ID`, `filling` типу `boolean`.
+- прості типи: `Label`, `Energy` (1–1000 ккал), `Milligrams`, `Vanillin`, `Grams` (0–100, два знаки після коми);
+- переліки: `caramel | iris | chocolate`, `milk | dark | white`;
+- комплексні типи: `CandyItem`, `CandyType`, `Ingredients`, `NutritionalValue`;
+- обов’язкові атрибути: `id` (`xs:ID`), `filling` (`boolean`).
 
-У каталозі 7 цукерок: Вечірній Київ, Ромашка, Білочка, Стріла, Дюшес, Корівка, Пташине молоко.
+У каталозі сім цукерок: Вечірній Київ, Ромашка, Білочка, Стріла, Дюшес, Корівка, Пташине молоко.
 
-## 5. Java-модель
+## 6. Java-модель
 
-Клас `Candy` (record) відповідає елементу `candy`:
-
-- `id`, `name`, `energy`
-- `type` — вид і наявність начинки
-- `ingredients` — вода, цукор, фруктоза, тип шоколаду, ванілін
-- `value` — білки, жири, вуглеводи
-- `production`
-
-Обмеження схеми перевіряються і в конструкторі моделі.
-
-## 6. Парсери SAX, DOM, StAX
-
-Усі три парсери реалізують `CandyParser` і збирають той самий список `List<Candy>` через спільний `CandyAssembler`. Це прибирає дублювання логіки полів.
-
-| Парсер | Клас | Ідея |
-|---|---|---|
-| SAX | `SaxCandyParser` | події `startElement` / `endElement` |
-| DOM | `DomCandyParser` | дерево `Document` |
-| StAX | `StaxCandyParser` | курсор `XMLStreamReader` |
-
-Програма читає документ кожним парсером. Результат однаковий: 7 об’єктів у порядку XML.
+`Candy` відповідає елементу `candy`: `id`, `name`, `energy`, `type`, `ingredients`, `value`, `production`. Обмеження схеми перевіряються і в конструкторі.
 
 ## 7. Сортування
 
-Інтерфейс `Comparator`:
+`Comparator`:
 
 - `CandyEnergyComparator` — за калорійністю;
 - `CandyNameComparator` — за українською назвою;
 - `CandyProductionComparator` — за виробником, потім за назвою.
 
-Після запуску в логу:
+Приклад логу після запуску з SAX:
 
 ```
-SAX by energy: Дюшес (365 kcal), Ромашка (378 kcal), Білочка (415 kcal),
-               Корівка (440 kcal), Вечірній Київ (452 kcal),
-               Пташине молоко (470 kcal), Стріла (498 kcal)
-DOM by name:   Білочка, Вечірній Київ, Дюшес, Корівка,
-               Пташине молоко, Ромашка, Стріла
+Collection built with SAX (7 candies)
+SAX by energy: Дюшес (365 kcal), ..., Стріла (498 kcal)
+SAX by name:   Білочка, ..., Стріла
 ```
-
-SAX, DOM і StAX дають однаковий порядок за калорійністю.
 
 ## 8. Валідація
 
-`XmlValidator` перевіряє байти XML проти XSD (`javax.xml.validation`).  
-Невалідний документ (немає `id`, енергія поза 1–1000, невідомий тип тощо) не розбирається.
-
-Успішний запуск:
+`XmlValidator` перевіряє XML за XSD до розбору. Невалідний документ (немає `id`, енергія поза межами, невідомий тип) не потрапляє в колекцію.
 
 ```
 INFO XmlValidator - XML document is valid
@@ -128,82 +106,45 @@ INFO XmlValidator - XML document is valid
 
 ## 9. XSL-перетворення
 
-Файл `src/main/resources/xsl/candies-by-type.xsl` групує цукерки за `type/kind`.
+`src/main/resources/xsl/candies-by-type.xsl` групує записи за `type/kind`.
 
-**Було** (плоский список у `candies.xml`):
-
-```xml
-<Candy>
-    <candy>...</candy>
-    <candy>...</candy>
-    ...
-</Candy>
-```
-
-**Стало** (`output/candies-by-type.xml`):
+Вхід (`candies.xml`) — плоский список `<candy>`.  
+Вихід (`output/candies-by-type.xml`) — підсписки:
 
 ```xml
 <Candy>
-    <caramel>
-        <candy id="romashka">Ромашка</candy>
-        <candy id="duchess">Дюшес</candy>
-    </caramel>
-    <chocolate>
-        <candy id="vk">Вечірній Київ</candy>
-        <candy id="strila">Стріла</candy>
-        <candy id="ptashyne">Пташине молоко</candy>
-    </chocolate>
-    <iris>
-        <candy id="bilochka">Білочка</candy>
-        <candy id="korivka">Корівка</candy>
-    </iris>
+    <caramel>   <!-- Ромашка, Дюшес -->
+    <chocolate> <!-- Вечірній Київ, Стріла, Пташине молоко -->
+    <iris>      <!-- Білочка, Корівка -->
 </Candy>
 ```
-
-Це відповідає прикладу з методички: список елементів розбито на підсписки за характеристикою Type.
 
 ## 10. Логування
 
-Використано `java.util.logging`.
-
-- конфігурація: `src/main/resources/logging.properties`
-- вивід у stdout: `StdOutHandler` (щоб повідомлення були в консолі IntelliJ, а не в stderr)
-
-Формат рядка: дата, час, рівень, клас, повідомлення.
+`java.util.logging`, файл `logging.properties`. Повідомлення йдуть у стандартний вивід (`StdOutHandler`).
 
 ## 11. Тести
 
-JUnit 5, команда `mvn test`. Покрито:
+`mvn test` (JUnit 5): валідація XSD, один handler, джерела подій SAX/DOM/StAX дають однаковий каталог, компаратори, XSL, `Main`.
 
-- розбір SAX / DOM / StAX і збіг результатів;
-- відхилення невалідного XML;
-- валідацію XSD (межі, переліки, дублікати `id`);
-- XSL-групування за типами;
-- компаратори;
-- обмеження моделі;
-- сценарій `Main`.
+## 12. Запуск
 
-## 12. Як запустити
-
-Потрібні JDK 21 і Maven (або IntelliJ IDEA).
+JDK 21, Maven або IntelliJ IDEA.
 
 ```bash
 mvn test
 mvn exec:java
 ```
 
-У IntelliJ: відкрити `Main.java` → Run. Робоча директорія — корінь проєкту.
+У IntelliJ: `Main.java` → Run, робоча директорія — корінь проєкту. Без аргументів використовується SAX. Інше джерело подій: `DOM` або `STAX` у Program arguments.
 
-Після запуску:
+Результат:
 
-1. У консолі — валідація, три парсери, сортування, повний згрупований XML.
-2. На диску — `output/candies-by-type.xml`.
+1. консоль — валідація, один парсер, сортування, згрупований XML;
+2. файл — `output/candies-by-type.xml`.
 
-Порівняння для захисту:
-
-- вхід: `src/main/resources/xml/candies.xml`
-- вихід: `output/candies-by-type.xml`
+Для порівняння: вхід `src/main/resources/xml/candies.xml`, вихід `output/candies-by-type.xml`.
 
 ## 13. Висновки
 
-Реалізовано каталог цукерок як XML із жорсткою схемою XSD. Документ читається трьома стандартними парсерами Java в одну модель, перевіряється за схемою, сортується через `Comparator` і XSL перетворюється на XML, згрупований за типом цукерки. Повідомлення програми йдуть через Logger, логіка розбору не дублюється, поведінка перевірена unit-тестами.
+Каталог цукерок описано в XML і обмежено XSD. Документ валідується, читається **одним парсером** `XmlCandyParser` з **одним обробником** `CandyXmlHandler`, сортується через `Comparator` і XSL перетворюється на XML, згрупований за типом. SAX, DOM і StAX лишаються як способи обходу документа, без окремих обробників. Логіка полів не дублюється, хід роботи пише Logger, поведінка перевірена тестами.
